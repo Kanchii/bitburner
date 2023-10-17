@@ -85,6 +85,14 @@ class InfectHandler {
  * @param {import(".").NS} ns
  */
 export async function main(ns) {
-  let infectHandler = new InfectHandler(ns);
-  await infectHandler.run();
+  let hackableServers = await scanNetworkServersAsync(ns);
+  let targets = (await getBestServerTargetAsync(ns))?.slice(0, 3);
+  hackableServers.forEach(server => {
+    if(!getRootAccess(ns, server)){
+      return;
+    }
+    ns.killall(server);
+    ns.scp(["./pirate-manager.js", "./pirate-hack.js", "./pirate-grow.js", "./pirate-weaken.js"], server, "home");
+    ns.exec("./pirate-manager.js", server, 1, ...targets);
+  });
 }
