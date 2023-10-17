@@ -2,7 +2,10 @@
 export async function main(ns) {
   ns.killall("home");
   
-  ns.run("./infect.js");
+  const pid = ns.run("./infect.js");
+  while(ns.isRunning(pid)){
+    await ns.asleep(50);
+  }
 
   ns.run("./private_server.js");
 
