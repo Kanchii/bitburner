@@ -1,18 +1,8 @@
+import { getPrograms } from "./utils";
+
 /** @param {import(".").NS} ns */
 export async function main(ns) {
-    var bought = ns.singularity.purchaseTor();
-    if(bought === false){
-        ns.tprint("ERROR You don't have money to buy Tor!");
-        return;
-    }
-
-    let programsToBuy = [
-        "BruteSSH.exe",
-        "FTPCrack.exe",
-        "relaySMTP.exe",
-        "HTTPWorm.exe",
-        "SQLInject.exe"
-    ]
+    let programsToBuy = getPrograms(ns, false);
 
     programsToBuy.forEach(x => {
         var cost = ns.singularity.getDarkwebProgramCost(x);

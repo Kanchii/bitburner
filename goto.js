@@ -7,6 +7,5 @@ export async function main(ns) {
     var pathToObj = findPathToServer(ns, "home", obj);
     for(var server of pathToObj){
         ns.singularity.connect(server);
-        await ns.asleep(100);
     }
 }

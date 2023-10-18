@@ -22,6 +22,22 @@ export async function scanNetworkServersAsync(ns){
 
 /**
  * 
+ * @param {import(".").NS} ns
+ * @param {bool} owned
+ * @returns {string[]} List of all programs owned by the player
+ */
+export function getPrograms(ns, owned = false){
+    return [
+        "BruteSSH.exe",
+        "FTPCrack.exe",
+        "relaySMTP.exe",
+        "HTTPWorm.exe",
+        "SQLInject.exe"
+    ].filter(program => owned ? ns.fileExists(program) : !ns.fileExists(program));
+}
+
+/**
+ * 
  * @param {import(".").NS} ns 
  * @param {string} target 
  * @returns {boolean} True if the player has root access to the server. False, otherwise

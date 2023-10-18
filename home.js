@@ -2,28 +2,34 @@ import { getBestServerTargetAsync, threadsToReduceSecurityLevelBy } from "./util
 
 /** @param {import(".").NS} ns */
 export async function main(ns) {
-  const scriptFarmPath = "./int_farm.js";
-  const pirateManagerPath = "./pirate-manager.js";
+  ns.disableLog("ALL");
 
-  ns.scriptKill(scriptFarmPath, "home");
-  ns.scriptKill(pirateManagerPath, "home");
+  const filesPath = {
+    int_farm: "./int_farm.js",
+    weaken: "./pirate-weaken.js",
+    pirate_manager: "./pirate-manager.js"
+  }
+
+  Object.values(filesPath).forEach(filePath => ns.scriptKill(filePath, "home"));
 
   if(ns.gang.inGang() && ns.singularity.getOwnedAugmentations(false).length <= 30){
+    ns.tprint(`----------------------- TRAINING MODE -----------------------`);
     let homeTotalRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home");
 
     let weakenTotalRamPercentage = 0.075;
     let weakenTotalRam = homeTotalRam * weakenTotalRamPercentage;
-    let totalWeakenThreads = Math.floor(weakenTotalRam / ns.getScriptRam("./weaken.js"));
+    let totalWeakenThreads = Math.floor(weakenTotalRam / ns.getScriptRam(filesPath.weaken));
     ns.tprint(`Total Weaken Threads Used: ${totalWeakenThreads}`);
-    ns.run("./weaken.js", totalWeakenThreads);
+    ns.run(filesPath.weaken, totalWeakenThreads, "home");
     
     let intFarmTotalRam = homeTotalRam * (1 - weakenTotalRamPercentage);
-    let threads = Math.min(20000, Math.floor(intFarmTotalRam / ns.getScriptRam(scriptFarmPath)));
+    let threads = Math.min(20000, Math.floor(intFarmTotalRam / ns.getScriptRam(filesPath.int_farm)));
     for(let  i = 0; i < threads; i++){
-      ns.run(scriptFarmPath, 1);
+      ns.run(filesPath.int_farm, 1);
     }
   } else {
+    ns.tprint(`----------------------- FARM MODE -----------------------`);
     const bestTargets = await getBestServerTargetAsync(ns, 2)
-    ns.run(pirateManagerPath, 1, ...bestTargets);
+    ns.run(filesPath.pirate_manager, 1, ...bestTargets);
   }
 }

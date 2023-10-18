@@ -16,11 +16,7 @@ export async function main(ns) {
   ns.tprint(`------------ RUNNING UPGRADE_HOME.JS ------------`);
   ns.run("./upgrade_home.js");
   ns.tprint(`------------ FINISHED ------------`);
-  
-  ns.tprint(`------------ RUNNING GANG.JS ------------`);
-  ns.run("./gang.js");
-  ns.tprint(`------------ FINISHED ------------`);
-  
+
   ns.tprint(`------------ RUNNING STOCK.JS ------------`);
   ns.run("./stock.js");
   ns.tprint(`------------ FINISHED ------------`);
