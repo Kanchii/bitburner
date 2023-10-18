@@ -57,9 +57,10 @@ export function getServerCurrentRam(ns, server) {
 
 /**
  * @param {import(".").NS} ns 
+ * @param {number} limit
  * @returns {Promise<string[]>} Best targets array
  */
-export async function getBestServerTargetAsync(ns){
+export async function getBestServerTargetAsync(ns, limit = undefined){
     let networkServers = await scanNetworkServersAsync(ns);
     let simulatedServers = []
     for(let networkServer of networkServers){
@@ -76,7 +77,8 @@ export async function getBestServerTargetAsync(ns){
 
     return simulatedServers.filter(serverInfo => serverInfo.hackLevelRequired <= Math.ceil(ns.getPlayer().skills.hacking / 4) && serverInfo.maxMoney > 0)
         .sort((a, b) => b.maxMoney - a.maxMoney)
-        .map(x => x.serverName);
+        .map(x => x.serverName)
+        .slice(0, limit);
 }
 
 /**

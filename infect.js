@@ -5,7 +5,7 @@ import { scanNetworkServersAsync, getRootAccess, getBestServerTargetAsync } from
  */
 export async function main(ns) {
   let hackableServers = await scanNetworkServersAsync(ns);
-  let targets = (await getBestServerTargetAsync(ns))?.slice(0, 2);
+  let targets = await getBestServerTargetAsync(ns, 2);
   hackableServers.forEach(server => {
     if(!getRootAccess(ns, server)){
       return;

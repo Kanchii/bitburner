@@ -2,13 +2,11 @@ import { getBestServerTargetAsync, threadsToReduceSecurityLevelBy } from "./util
 
 /** @param {import(".").NS} ns */
 export async function main(ns) {
-  let scriptFarmPath = "./int_farm.js";
-  let scriptVirusPath = "./virus.js";
-  let weakenScriptPath = "./weaken.js";
+  const scriptFarmPath = "./int_farm.js";
+  const pirateManagerPath = "./pirate-manager.js";
 
   ns.scriptKill(scriptFarmPath, "home");
-  ns.scriptKill(scriptVirusPath, "home");
-  ns.scriptKill(weakenScriptPath, "home");
+  ns.scriptKill(pirateManagerPath, "home");
 
   if(ns.gang.inGang() && ns.singularity.getOwnedAugmentations(false).length <= 30){
     let homeTotalRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home");
@@ -25,21 +23,7 @@ export async function main(ns) {
       ns.run(scriptFarmPath, 1);
     }
   } else {
-    let totalTargets = 4;
-    let threads = 0;
-    var bestTargets = await getBestServerTargetAsync(ns);
-    do {
-      totalTargets--;
-      if(totalTargets <= 0){
-        break;
-      }
-      var targets = bestTargets.slice(0, totalTargets);
-      let homeTotalRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - 100
-      threads = Math.floor((homeTotalRam / ns.getScriptRam(scriptVirusPath)) / targets.length);
-    } while(threads <= 0);
-
-    bestTargets.slice(0, totalTargets).forEach(x => {
-      ns.run(scriptVirusPath, threads, x);
-    });
+    const bestTargets = await getBestServerTargetAsync(ns, 2)
+    ns.run(pirateManagerPath, 1, ...bestTargets);
   }
 }
