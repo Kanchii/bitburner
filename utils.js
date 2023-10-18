@@ -15,7 +15,6 @@ export async function scanNetworkServersAsync(ns){
             }
             servers.push(scannedServer)
         });
-        await ns.asleep(50);
     } while(index < servers.length)
 
     return servers
