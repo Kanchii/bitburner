@@ -1,3 +1,9 @@
+let ATTACK_TYPE = {
+    hack: "./pirate-hack.js",
+    grow: "./pirate-grow.js",
+    weaken: "./pirate-weaken.js"
+}
+
 /** @param {import(".").NS} ns */
 export async function main(ns) {
     ns.disableLog("ALL");
@@ -34,28 +40,38 @@ async function runAttack(ns, target, ram){
     ns.print(`SUCCESS ${JSON.stringify(attackStrategy)}`);
     ns.print(`SUCCESS ----------------------------------------`);
     attackStrategy.forEach(async attackData => {
-        const threads = Math.floor((ram * attackData.percent) / ns.getScriptRam(attackData.file));
+        const threads = Math.floor((ram * attackData.percent) / ns.getScriptRam(attackData.attackType));
         if(threads <= 0){
-            ns.print(`ERROR Skipping because we don't have sufficient threads to attack ${target} using ${attackData.file}!`);
+            ns.print(`ERROR Skipping because we don't have sufficient threads to attack ${target} using ${attackData.attackType}!`);
             return;
         }
-        const pid = ns.run(attackData.file, {
+        const pid = ns.run(attackData.attackType, {
             threads: threads
         }, target);
 
-        pidsRunning.push(pid);
-        await ns.asleep(250);
+        pidsRunning.push({pid: pid, attackType: attackData.attackType, percent: attackData.percent});
     });
 
+    let weakenOrGrowRunning = true;
     do {
-        await ns.asleep(1_000);
-    } while(pidsRunning.map(pid => ns.isRunning(pid)).includes(true));
+        weakenOrGrowRunning = pidsRunning.filter(x => x.attackType !== ATTACK_TYPE.hack && ns.isRunning(x.pid)).length > 0;
+        if(weakenOrGrowRunning){
+            pidsRunning.forEach(attackData => {
+                if(attackData.attackType === ATTACK_TYPE.hack && !ns.isRunning(attackData.pid)){
+                    const threads = Math.floor((ram * attackData.percent) / ns.getScriptRam(attackData.attackType));
+                    attackData.pid = ns.run(ATTACK_TYPE.hack, threads, target);
+                }
+            });
+        }
+        
+        await ns.asleep(50);
+    } while(pidsRunning.map(pid => ns.isRunning(pid.pid)).includes(true));
 }
 
 /**
  * @param {import(".").NS} ns
  * @param {string} target
- * @returns {[{percent: number, file: string}]} Array with definitions of percentage and which file to run
+ * @returns {[{percent: number, attackType: string}]} Array with definitions of percentage and which file to run
  */
 function getAttackStrategy(ns, target){
     const targetMinServerSecurityThreshold = ns.getServerMinSecurityLevel(target) + 5;
@@ -73,12 +89,11 @@ function getAttackStrategy(ns, target){
     ns.print(`INFO ----------------------------------------`);
 
     if(targetServerSecurity > targetMinServerSecurityThreshold){
-        return [{percent: 0.3, file: "./pirate-grow.js"}, {percent: 0.7, file: "./pirate-weaken.js"}];
+        return [{percent: 0.3, attackType: ATTACK_TYPE.grow}, {percent: 0.7, attackType: ATTACK_TYPE.weaken}];
     }
     if(targetServerMoneyAvailable < targetMoneyAvailableThreshold){
-        return [{percent: 0.6, file: "./pirate-grow.js"}, {percent: 0.4, file: "./pirate-weaken.js"}];
+        return [{percent: 0.6, attackType: ATTACK_TYPE.grow}, {percent: 0.4, attackType: ATTACK_TYPE.weaken}];
     }
 
-    return [{percent: 0.25, file: "./pirate-hack.js"}, {percent: 0.25, file: "./pirate-weaken.js"},
-            {percent: 0.25, file: "./pirate-grow.js"}, {percent: 0.25, file: "./pirate-weaken.js"}];
+    return [{percent: 0.9, attackType: ATTACK_TYPE.hack}, {percent: 0.05, attackType: ATTACK_TYPE.weaken}, {percent: 0.05, attackType: ATTACK_TYPE.grow}];
 }

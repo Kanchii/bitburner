@@ -34,7 +34,7 @@ export async function main(ns) {
         break;
       }
       var targets = bestTargets.slice(0, totalTargets);
-      let homeTotalRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - 1000
+      let homeTotalRam = ns.getServerMaxRam("home") - ns.getServerUsedRam("home") - 100
       threads = Math.floor((homeTotalRam / ns.getScriptRam(scriptVirusPath)) / targets.length);
     } while(threads <= 0);
 
