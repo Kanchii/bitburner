@@ -6,9 +6,9 @@ export async function main(ns) {
   ns.run("./infect.js");
   ns.tprint(`------------ FINISHED ------------`);
 
-  ns.tprint(`------------ RUNNING PRIVATE_SERVER.JS ------------`);
-  ns.run("./private_server.js");
-  ns.tprint(`------------ FINISHED ------------`);
+  // ns.tprint(`------------ RUNNING PRIVATE_SERVER.JS ------------`);
+  // ns.run("./private_server.js");
+  // ns.tprint(`------------ FINISHED ------------`);
 
   ns.tprint(`------------ RUNNING UPGRADE_HOME.JS ------------`);
   ns.run("./upgrade_home.js");
