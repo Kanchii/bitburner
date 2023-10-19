@@ -72,7 +72,7 @@ export async function main(ns) {
             ns.tprint("ERROR --------------------")
             ns.tprint(`INFO [${timeAsString}] CURRENT PROFIT = $${totalProfit / BILLION_CONST}b`);
             ns.tprint(`SUCCESS [${timeAsString}] POTENTIAL PROFIT = $${profitAfterSell / BILLION_CONST}b`);
-            ns.tprint("ERROR --------------------")
+            ns.tprint("ERROR --------------------");
         }
         
         await ns.sleep(2_500);

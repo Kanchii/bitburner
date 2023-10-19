@@ -24,7 +24,7 @@ class PrivateServerHandle {
 
     async upgrade(){
         let purchasedServers = this.ns.getPurchasedServers();
-        while(Math.min(...purchasedServers.map(pserv => this.ns.getServerMaxRam(pserv))) < this.ns.getPurchasedServerMaxRam()){
+        while(Math.min(...purchasedServers.map(pserv => this.ns.getServerMaxRam(pserv))) < this.ns.getPurchasedServerMaxRam() / 4){
             purchasedServers
                 .filter(pserv => this.ns.getServerMaxRam(pserv) < this.ns.getPurchasedServerMaxRam())
                 .sort((a, b) => this.ns.getServerMaxRam(a) - this.ns.getServerMaxRam(b))

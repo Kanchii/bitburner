@@ -12,13 +12,16 @@ export async function main(ns) {
     for(let target of targets){
         ns.run("./goto.js", 1, target);
 
-        await ns.asleep(4_000);
-        if(getRootAccess(ns, target)){
-            ns.toast(`Installing backdoor at ${target}`, "info");
-            await ns.singularity.installBackdoor();
-        }
+        try {
+            await ns.asleep(4_000);
+            if(getRootAccess(ns, target)){
+                ns.toast(`Installing backdoor at ${target}`, "info");
+                await ns.singularity.installBackdoor();
+            }
 
-        await ns.asleep(2_000);
+            await ns.asleep(2_000);
+        } catch(_) {}
+
         ns.run("./goto.js", 1, "home");
     }
     ns.run("./home.js");
