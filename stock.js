@@ -52,7 +52,7 @@ export async function main(ns) {
                 });
 
             // Raising position
-            ns.stock.getSymbols().filter(x => ns.stock.getPosition(x)[0] > 0 && ns.stock.getForecast(x) >= 0.7)
+            ns.stock.getSymbols().filter(x => ns.stock.getPosition(x)[0] > 0 && ns.stock.getForecast(x) >= 0.65)
                 .sort((a, b) => ns.stock.getForecast(b) - ns.stock.getForecast(a))
                 .slice(0, 5)
                 .sort((a, b) => ns.stock.getVolatility(b) - ns.stock.getVolatility(a))
@@ -64,8 +64,15 @@ export async function main(ns) {
                         ns.tprint(`[${timeAsString}] Raised ${maxSharesToBuy} shares of ${x}!!!`);
                     }
                 });
-
+            
+            const profitAfterSell = ns.stock.getSymbols()
+                .filter(x => ns.stock.getPosition(x)[0] > 0)
+                .map(x => ns.stock.getSaleGain(x, ns.stock.getPosition(x)[0], "Long") - (ns.stock.getPosition(x)[1] * ns.stock.getPosition(x)[0] + TRANSACTION_FEE))
+                .reduce((prev, cur) => prev + cur, 0);
+            ns.tprint("ERROR --------------------")
             ns.tprint(`INFO [${timeAsString}] CURRENT PROFIT = $${totalProfit / BILLION_CONST}b`);
+            ns.tprint(`SUCCESS [${timeAsString}] POTENTIAL PROFIT = $${profitAfterSell / BILLION_CONST}b`);
+            ns.tprint("ERROR --------------------")
         }
         
         await ns.sleep(2_500);

@@ -59,7 +59,9 @@ async function runAttack(ns, target, ram){
             pidsRunning.forEach(attackData => {
                 if(attackData.attackType === ATTACK_TYPE.hack && !ns.isRunning(attackData.pid)){
                     const threads = Math.floor((ram * attackData.percent) / ns.getScriptRam(attackData.attackType));
-                    attackData.pid = ns.run(ATTACK_TYPE.hack, threads, target);
+                    attackData.pid = ns.run(attackData.attackType, {
+                        threads: threads
+                    }, target);
                 }
             });
         }
@@ -95,5 +97,5 @@ function getAttackStrategy(ns, target){
         return [{percent: 0.6, attackType: ATTACK_TYPE.grow}, {percent: 0.4, attackType: ATTACK_TYPE.weaken}];
     }
 
-    return [{percent: 0.9, attackType: ATTACK_TYPE.hack}, {percent: 0.05, attackType: ATTACK_TYPE.weaken}, {percent: 0.05, attackType: ATTACK_TYPE.grow}];
+    return [{percent: 0.5, attackType: ATTACK_TYPE.hack}, {percent: 0.25, attackType: ATTACK_TYPE.weaken}, {percent: 0.25, attackType: ATTACK_TYPE.grow}];
 }

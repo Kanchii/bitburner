@@ -5,7 +5,10 @@ export async function main(ns) {
         var playerMoney = ns.getServerMoneyAvailable("home");
         if(playerMoney > 500_000_000_000){
             ns.print(`-------------------- BUYING AUGMENTATIONS --------------------`);
-            ns.run("./augments.js");
+            const pid = ns.run("./augments.js");
+            while(ns.isRunning(pid)){
+                await ns.asleep(50);
+            }
         }
 
         if(ns.singularity.getOwnedAugmentations(true).length - ns.singularity.getOwnedAugmentations(false).length >= 5){
@@ -19,7 +22,7 @@ export async function main(ns) {
             ns.print(`-------------------- WORKING FOR DAEDALUS --------------------`);
             ns.singularity.workForFaction("Daedalus", "hacking");
         } else if(!ns.gang.inGang()){
-            if(ns.heart.break() >= 54000){
+            if(ns.heart.break() <= -54000){
                 ns.print(`-------------------- CREATING GANG --------------------`);
                 ns.gang.createGang("Slum Snakes");
                 ns.run("./gang.js");

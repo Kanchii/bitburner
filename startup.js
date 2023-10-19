@@ -17,14 +17,21 @@ export async function main(ns) {
   ns.run("./upgrade_home.js");
   ns.tprint(`------------ FINISHED ------------`);
 
-  ns.tprint(`------------ RUNNING STOCK.JS ------------`);
-  ns.run("./stock.js");
-  ns.tprint(`------------ FINISHED ------------`);
-  // ns.run("./corporation.js");
-  
   ns.tprint(`------------ RUNNING LOOP.JS ------------`);
   ns.run("./loop.js");
   ns.tprint(`------------ FINISHED ------------`);
+
+  ns.tprint(`------------ RUNNING GANG.JS ------------`);
+  ns.run("./gang.js");
+  ns.tprint(`------------ FINISHED ------------`);
+
+  ns.tprint(`------------ RUNNING STOCK.JS ------------`);
+  ns.run("./stock.js");
+  ns.tprint(`------------ FINISHED ------------`);
+
+  // ns.tprint(`------------ RUNNING CORPORATION.JS ------------`);
+  // ns.run("./corporation.js");
+  // ns.tprint(`------------ FINISHED ------------`);
 
   ns.tprint(`------------ RUNNING HOME.JS ------------`);
   ns.run("./home.js");
