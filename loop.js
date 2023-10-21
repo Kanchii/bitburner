@@ -20,7 +20,13 @@ export async function main(ns) {
 
         if(ns.getPlayer().factions.includes("Daedalus") && !ns.singularity.isBusy()){
             ns.print(`-------------------- WORKING FOR DAEDALUS --------------------`);
-            ns.singularity.workForFaction("Daedalus", "hacking");
+            if(ns.singularity.getFactionFavor("Daedalus") >= 150){
+                if(ns.getServerMoneyAvailable("home") > 300_000_000){
+                    ns.singularity.donateToFaction("Daedalus", ns.getServerMoneyAvailable("home"));
+                }
+            } else {
+                ns.singularity.workForFaction("Daedalus", "field", false);
+            }
         } else if(!ns.gang.inGang()){
             if(ns.heart.break() <= -54000){
                 ns.print(`-------------------- CREATING GANG --------------------`);

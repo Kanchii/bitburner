@@ -38,9 +38,8 @@ export async function main(ns) {
 
             // Buying new stocks
             ns.stock.getSymbols().filter(x => ns.stock.getPosition(x)[0] === 0 && ns.stock.getForecast(x) >= 0.6)
-                .sort((a, b) => ns.stock.getForecast(b) - ns.stock.getForecast(a))
+                .sort((a, b) => ns.stock.getForecast(b) - ns.stock.getForecast(a) || ns.stock.getVolatility(b) - ns.stock.getVolatility(a))
                 .slice(0, 5)
-                .sort((a, b) => ns.stock.getVolatility(b) - ns.stock.getVolatility(a))
                 .forEach(x => {
                     const playerMoney = ns.getServerMoneyAvailable("home") - TRANSACTION_FEE;
                     const maxSharesToBuy = Math.floor(playerMoney / ns.stock.getAskPrice(x));
@@ -71,9 +70,15 @@ export async function main(ns) {
                 .filter(x => ns.stock.getPosition(x)[0] > 0)
                 .map(x => ns.stock.getSaleGain(x, ns.stock.getPosition(x)[0], "Long") - (ns.stock.getPosition(x)[1] * ns.stock.getPosition(x)[0] + TRANSACTION_FEE))
                 .reduce((prev, cur) => prev + cur, 0);
-            ns.tprint("ERROR --------------------")
-            ns.tprint(`INFO [${timeAsString}] CURRENT PROFIT = $${totalProfit / BILLION_CONST}b`);
-            ns.tprint(`SUCCESS [${timeAsString}] POTENTIAL PROFIT = $${profitAfterSell / BILLION_CONST}b`);
+            
+            const portfolioTotalValue = ns.stock.getSymbols()
+                .filter(x => ns.stock.getPosition(x)[0] > 0)
+                .reduce((prev, cur) => prev + ns.stock.getPosition(cur)[0] * ns.stock.getPosition(cur)[1], 0);
+
+            ns.tprint("ERROR --------------------");
+            ns.tprint(`INFO    [${timeAsString}] PORTFOLIO TOTAL VALUE    = $${portfolioTotalValue / BILLION_CONST}b`);
+            ns.tprint(`INFO    [${timeAsString}] TOTAL PROFITED           = $${totalProfit / BILLION_CONST}b`);
+            ns.tprint(`SUCCESS [${timeAsString}] CURRENT PORTFOLIO PROFIT = $${profitAfterSell / BILLION_CONST}b`);
             ns.tprint("ERROR --------------------");
         }
         

@@ -31,14 +31,14 @@ class PrivateServerHandle {
                 .forEach(pserv => {
                     let upgradedServerRam = this.ns.getServerMaxRam(pserv);
                     let willUpgrade = false;
-                    while(this.ns.getPurchasedServerUpgradeCost(pserv, upgradedServerRam * 2) < this.ns.getServerMoneyAvailable("home") * 0.50){
+                    while(this.ns.getPurchasedServerUpgradeCost(pserv, upgradedServerRam * 2) < this.ns.getServerMoneyAvailable("home") * 0.15){
                         upgradedServerRam *= 2;
                         willUpgrade = true;
                         if(upgradedServerRam >= this.ns.getPurchasedServerMaxRam()) break;
                     }
                     if(!willUpgrade) return;
 
-                    if(this.ns.getPurchasedServerUpgradeCost(pserv, upgradedServerRam) < this.ns.getServerMoneyAvailable("home") * 0.50){
+                    if(this.ns.getPurchasedServerUpgradeCost(pserv, upgradedServerRam) < this.ns.getServerMoneyAvailable("home") * 0.15){
                         this.ns.upgradePurchasedServer(pserv, upgradedServerRam);
                         this.print(`Server ${pserv} upgraded to RAM ${upgradedServerRam}`);
                     }

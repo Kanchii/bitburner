@@ -6,9 +6,9 @@ export async function main(ns) {
   ns.run("./infect.js");
   ns.tprint(`------------ FINISHED ------------`);
 
-  // ns.tprint(`------------ RUNNING PRIVATE_SERVER.JS ------------`);
-  // ns.run("./private_server.js");
-  // ns.tprint(`------------ FINISHED ------------`);
+  ns.tprint(`------------ RUNNING PRIVATE_SERVER.JS ------------`);
+  ns.run("./private_server.js");
+  ns.tprint(`------------ FINISHED ------------`);
 
   ns.tprint(`------------ RUNNING UPGRADE_HOME.JS ------------`);
   ns.run("./upgrade_home.js");
@@ -25,6 +25,10 @@ export async function main(ns) {
   ns.tprint(`------------ RUNNING STOCK.JS ------------`);
   ns.run("./stock.js");
   ns.tprint(`------------ FINISHED ------------`);
+
+  // ns.tprint(`------------ RUNNING BLADEBURNER.JS ------------`);
+  // ns.run("./bladeburner.js");
+  // ns.tprint(`------------ FINISHED ------------`);
 
   // ns.tprint(`------------ RUNNING CORPORATION.JS ------------`);
   // ns.run("./corporation.js");

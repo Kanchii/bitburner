@@ -10,19 +10,22 @@ export async function main(ns) {
         targets = ["CSEC", "avmnite-02h", "I.I.I.I", "run4theh111z"];
     }
     for(let target of targets){
-        ns.run("./goto.js", 1, target);
+        let pid = ns.run("./goto.js", 1, target);
+        while(ns.isRunning(pid)){
+            await ns.asleep(25);
+        }
 
         try {
-            await ns.asleep(4_000);
             if(getRootAccess(ns, target)){
                 ns.toast(`Installing backdoor at ${target}`, "info");
                 await ns.singularity.installBackdoor();
             }
-
-            await ns.asleep(2_000);
         } catch(_) {}
 
-        ns.run("./goto.js", 1, "home");
+        pid = ns.run("./goto.js", 1, "home");
+        while(ns.isRunning(pid)){
+            await ns.asleep(25);
+        }
     }
     ns.run("./home.js");
 }
