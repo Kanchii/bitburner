@@ -1,14 +1,12 @@
 /** @param {import(".").NS} ns */
 export async function main(ns) {
     ns.disableLog("ALL");
+    let iteration = 1;
     while(true){
-        var playerMoney = ns.getServerMoneyAvailable("home");
-        if(playerMoney > 500_000_000_000){
-            ns.print(`-------------------- BUYING AUGMENTATIONS --------------------`);
-            const pid = ns.run("./augments.js");
-            while(ns.isRunning(pid)){
-                await ns.asleep(50);
-            }
+        ns.print(`[Iteration #${iteration}] -------------------- TRYING TO BUY AUGMENTATIONS --------------------`);
+        const pid = ns.run("./augments.js");
+        while(ns.isRunning(pid)){
+            await ns.asleep(50);
         }
 
         if(ns.singularity.getOwnedAugmentations(true).length - ns.singularity.getOwnedAugmentations(false).length >= 5){
@@ -16,10 +14,13 @@ export async function main(ns) {
             break;
         }
 
-        ns.singularity.checkFactionInvitations().forEach(x => ns.singularity.joinFaction(x));
+        ns.singularity.checkFactionInvitations().forEach(x => {
+            ns.print(`[Iteration #${iteration}] -------------------- ACCEPTING INVITATION --------------------`);
+            ns.singularity.joinFaction(x)
+        });
 
-        if(ns.getPlayer().factions.includes("Daedalus") && !ns.singularity.isBusy()){
-            ns.print(`-------------------- WORKING FOR DAEDALUS --------------------`);
+        if(ns.getPlayer().factions.includes("Daedalus") && !ns.singularity.isBusy() && !ns.singularity.getOwnedAugmentations(true).includes("The Red Pill")){
+            ns.print(`[Iteration #${iteration}] -------------------- WORKING FOR DAEDALUS --------------------`);
             if(ns.singularity.getFactionFavor("Daedalus") >= 150){
                 if(ns.getServerMoneyAvailable("home") > 300_000_000){
                     ns.singularity.donateToFaction("Daedalus", ns.getServerMoneyAvailable("home"));
@@ -29,7 +30,7 @@ export async function main(ns) {
             }
         } else if(!ns.gang.inGang()){
             if(ns.heart.break() <= -54000){
-                ns.print(`-------------------- CREATING GANG --------------------`);
+                ns.print(`[Iteration #${iteration}] -------------------- CREATING GANG --------------------`);
                 ns.gang.createGang("Slum Snakes");
                 ns.run("./gang.js");
             } else {
@@ -45,7 +46,7 @@ export async function main(ns) {
                         ns.singularity.gymWorkout("Sector-12", "agility");
                     }
                 } else {
-                    ns.print(`-------------------- CRIME: HOMICIDE --------------------`);
+                    ns.print(`[Iteration #${iteration}] -------------------- CRIME: HOMICIDE --------------------`);
                     ns.singularity.commitCrime("Homicide", false);
                 }
             }
