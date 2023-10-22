@@ -8,6 +8,7 @@ export async function main(ns) {
   var lastTargets = [];
   while(true){
     const targets = await getBestServerTargetAsync(ns, 2);
+    let killAll = false;
     if(!targets.every(x => lastTargets.includes(x))){
       ns.tprint(`INFO ------------------- [ INFECTING ] -------------------`);
       ns.tprint(`INFO ------------------- LAST TARGETS: ${"[" + lastTargets.join(", ") + "]"} -------------------`);
@@ -15,18 +16,27 @@ export async function main(ns) {
       ns.tprint(`INFO ------------------- [ INFECTING ] -------------------`);
       
       lastTargets = targets;
-
-      const hackableServers = await scanNetworkServersAsync(ns);
-      hackableServers.forEach(server => {
-        if(!getRootAccess(ns, server)){
-          return;
-        }
-        ns.killall(server);
-        ns.scp(["./pirate-manager.js", "./pirate-hack.js", "./pirate-grow.js", "./pirate-weaken.js"], server, "home");
-        ns.exec("./pirate-manager.js", server, 1, ...targets);
-      });
+      killAll = true;
     }
 
+    const hackableServers = await scanNetworkServersAsync(ns);
+    hackableServers.forEach(async server => {
+      if(!getRootAccess(ns, server)){
+        return;
+      }
+      if(killAll){
+        ns.killall(server);
+      }
+
+      ns.scp("./hack.js", server, "home");
+      let targetIndex = 0;
+      while((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) >= ns.getScriptRam("./hack.js")){
+        ns.exec("./hack.js", server, 1, targets[targetIndex]);
+        await ns.asleep(50);
+
+        targetIndex = (targetIndex + 1) % (targets.length);
+      }
+    });
     await ns.asleep(30_000);
   }
 }
