@@ -82,9 +82,9 @@ class GangHandler {
             if(job === "money"){
                 let ascendMember = false;
                 if(this.isHackingGang){
-                    ascendMember = this.gang.getAscensionResult(gangMember)?.hack >= 1.2;
+                    ascendMember = this.gang.getAscensionResult(gangMember)?.hack >= 1.3;
                 } else {
-                    ascendMember = this.gang.getAscensionResult(gangMember)?.str >= 1.2;
+                    ascendMember = this.gang.getAscensionResult(gangMember)?.str >= 1.3;
                 }
                 if(ascendMember){
                     this.gang.ascendMember(gangMember)
@@ -148,7 +148,7 @@ class GangHandler {
         this.gang.getMemberNames().forEach(gangMember => {
             var memberMainStats = this.getGangMemberMainStats(gangMember);
             if(this.gangMemberJob[gangMember] === "money"){
-                if(memberMainStats[1] <= 2500){
+                if(memberMainStats[1] <= 2250){
                     this.gang.setMemberTask(gangMember, `Train ${memberMainStats[0] == "str" ? "Combat" : "Hacking"}`);
                 } else {
                     this.gang.setMemberTask(gangMember, memberMainStats[0] == "str" ? "Human Trafficking" : "Money Laundering");
