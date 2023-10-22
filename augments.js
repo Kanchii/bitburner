@@ -1,5 +1,11 @@
 /** @param {import(".").NS} ns */
 export async function main(ns) {
+    const ownedAugmentations = ns.singularity.getOwnedAugmentations(false);
+    const moneyThreshold = 100_000_000 + Math.pow(ownedAugmentations.length, 3) * 5_000_000;
+    if(ns.getServerMoneyAvailable("home") < moneyThreshold){
+        ns.exit();
+    }
+
     do {
         var newAugBought = false;
         ns.getPlayer().factions.sort((a, b) => {
@@ -13,6 +19,7 @@ export async function main(ns) {
                 .sort((a, b) => ns.singularity.getAugmentationPrice(b) - ns.singularity.getAugmentationPrice(a))
                 .forEach(aug => {
                     if(buyPurchaseAugmentation(ns, aug, faction)){
+                        ns.tprint(`INFO ---------------- BOUGHT ${aug} FROM FACTION ${faction} ----------------`)
                         newAugBought = true;
                     }
             });

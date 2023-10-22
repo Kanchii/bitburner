@@ -3,13 +3,10 @@ export async function main(ns) {
     ns.disableLog("ALL");
     let iteration = 1;
     while(true){
-        var playerMoney = ns.getServerMoneyAvailable("home");
-        if(playerMoney > 250_000_000_000){
-            ns.print(`[Iteration #${iteration}] -------------------- BUYING AUGMENTATIONS --------------------`);
-            const pid = ns.run("./augments.js");
-            while(ns.isRunning(pid)){
-                await ns.asleep(50);
-            }
+        ns.print(`[Iteration #${iteration}] -------------------- TRYING TO BUY AUGMENTATIONS --------------------`);
+        const pid = ns.run("./augments.js");
+        while(ns.isRunning(pid)){
+            await ns.asleep(50);
         }
 
         if(ns.singularity.getOwnedAugmentations(true).length - ns.singularity.getOwnedAugmentations(false).length >= 5){
