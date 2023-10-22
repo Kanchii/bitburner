@@ -7,7 +7,7 @@ export async function main(ns) {
   ns.disableLog("ALL");
   var lastTargets = [];
   while(true){
-    const targets = await getBestServerTargetAsync(ns, 2);
+    const targets = await getBestServerTargetAsync(ns, 1);
     if(!targets.every(x => lastTargets.includes(x))){
       ns.tprint(`INFO ------------------- [ INFECTING ] -------------------`);
       ns.tprint(`INFO ------------------- LAST TARGETS: ${"[" + lastTargets.join(", ") + "]"} -------------------`);

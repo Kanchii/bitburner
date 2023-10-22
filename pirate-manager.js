@@ -12,19 +12,15 @@ export async function main(ns) {
         const serverUsableRam = ns.getServerMaxRam(ns.getHostname()) - ns.getServerUsedRam(ns.getHostname());
         if(serverUsableRam < ns.getScriptRam("./pirate-weaken.js")){
             ns.print(`ERROR Killing script because it don't have enought RAM to run scripts!`);
-            return;
+            ns.exit();
         }
-        if(serverUsableRam > 128){
-            const ramPerTarget = serverUsableRam / targets.length;
-            let concurrentExecs = []
-            targets.forEach(async target => {
-                concurrentExecs.push(runAttack(ns, target, Math.floor(ramPerTarget)))
-            });
-            await Promise.allSettled(concurrentExecs);
-            ns.print(`INFO -------------------- ATTACK FINISHED --------------------`);
-        } else {
-            await runAttack(ns, targets[0], serverUsableRam);
-        }
+        const ramPerTarget = serverUsableRam / targets.length;
+        let concurrentExecs = []
+        targets.forEach(async target => {
+            concurrentExecs.push(runAttack(ns, target, Math.floor(ramPerTarget)))
+        });
+        await Promise.allSettled(concurrentExecs);
+        ns.print(`INFO -------------------- ATTACK FINISHED --------------------`);
     }
 }
 
@@ -50,6 +46,7 @@ async function runAttack(ns, target, ram){
         }, target);
 
         pidsRunning.push({pid: pid, attackType: attackData.attackType, percent: attackData.percent});
+        await ns.asleep(50);
     });
 
     let weakenOrGrowRunning = true;
@@ -76,26 +73,13 @@ async function runAttack(ns, target, ram){
  * @returns {[{percent: number, attackType: string}]} Array with definitions of percentage and which file to run
  */
 function getAttackStrategy(ns, target){
-    const targetMinServerSecurityThreshold = ns.getServerMinSecurityLevel(target) + 5;
-    const targetServerSecurity = ns.getServerSecurityLevel(target);
-
-    const targetServerMoneyAvailable = ns.getServerMoneyAvailable(target);
-    const targetMoneyAvailableThreshold = ns.getServerMaxMoney(target) * 0.75;
-
-    ns.print(`INFO -------------------- ${target.toUpperCase()} --------`);
-    ns.print(`INFO Server Money Threshold:    $${targetMoneyAvailableThreshold.toFixed(2)}`);
-    ns.print(`INFO Server Current Money:      $${targetServerMoneyAvailable.toFixed(2)}`);
-    ns.print(`INFO ----------------------------------------`);
-    ns.print(`INFO Server Security Threshold: ${targetMinServerSecurityThreshold.toFixed(2)}`);
-    ns.print(`INFO Server Current Security:   ${targetServerSecurity.toFixed(2)}`);
-    ns.print(`INFO ----------------------------------------`);
-
-    if(targetServerSecurity > targetMinServerSecurityThreshold){
-        return [{percent: 0.3, attackType: ATTACK_TYPE.grow}, {percent: 0.7, attackType: ATTACK_TYPE.weaken}];
-    }
-    if(targetServerMoneyAvailable < targetMoneyAvailableThreshold){
-        return [{percent: 0.6, attackType: ATTACK_TYPE.grow}, {percent: 0.4, attackType: ATTACK_TYPE.weaken}];
+    if(ns.formulas.hacking.hackChance(ns.getServer(target), ns.getPlayer()) >= 0.9){
+        return [{percent: 0.25, attackType: ATTACK_TYPE.hack},
+            {percent: 0.25, attackType: ATTACK_TYPE.weaken},
+            {percent: 0.25, attackType: ATTACK_TYPE.grow},
+            {percent: 0.25, attackType: ATTACK_TYPE.weaken}];
+    } else {
+        return [{percent: 0.7, attackType: ATTACK_TYPE.weaken}, {percent: 0.3, attackType: ATTACK_TYPE.grow}];
     }
 
-    return [{percent: 0.5, attackType: ATTACK_TYPE.hack}, {percent: 0.25, attackType: ATTACK_TYPE.weaken}, {percent: 0.25, attackType: ATTACK_TYPE.grow}];
 }
