@@ -19,7 +19,9 @@ export async function main(ns) {
             ns.singularity.joinFaction(x)
         });
 
-        if(ns.getPlayer().factions.includes("Daedalus") && !ns.singularity.isBusy() && !ns.singularity.getOwnedAugmentations(true).includes("The Red Pill")){
+        if(ns.getPlayer().factions.includes("Daedalus") &&
+                !ns.singularity.getOwnedAugmentations(true).includes("The Red Pill") &&
+                ns.singularity.getOwnedAugmentations(false).includes("The Blade's Simulacrum")){
             ns.print(`[Iteration #${iteration}] -------------------- WORKING FOR DAEDALUS --------------------`);
             if(ns.singularity.getFactionFavor("Daedalus") >= 150){
                 if(ns.getServerMoneyAvailable("home") > 300_000_000){
@@ -27,6 +29,7 @@ export async function main(ns) {
                 }
             } else {
                 ns.singularity.workForFaction("Daedalus", "field", false);
+                ns.run("./share.js");
             }
         } else if(!ns.gang.inGang()){
             if(ns.heart.break() <= -54000){
@@ -35,15 +38,19 @@ export async function main(ns) {
                 ns.run("./gang.js");
             } else {
                 if(ns.singularity.getCrimeChance("Homicide") < .93){
-                    ns.print(`-------------------- STARTING WORKOUT --------------------`);
-                    if(ns.getPlayer().skills.strength < 100){
-                        ns.singularity.gymWorkout("Sector-12", "strenght");
-                    } else if(ns.getPlayer().skills.defense < 100){
-                        ns.singularity.gymWorkout("Sector-12", "defense");
-                    } else if(ns.getPlayer().skills.dexterity < 100){
-                        ns.singularity.gymWorkout("Sector-12", "dexterity");
+                    ns.print(`[Iteration #${iteration}] -------------------- STARTING WORKOUT --------------------`);
+                    if(ns.getPlayer().skills.strength < 85){
+                        ns.print(`[Iteration #${iteration}] -------------------- TRAINING STRENGHT --------------------`);
+                        ns.singularity.gymWorkout("powerhouse gym", "str", false);
+                    } else if(ns.getPlayer().skills.defense < 85){
+                        ns.print(`[Iteration #${iteration}] -------------------- TRAINING DEFENSE --------------------`);
+                        ns.singularity.gymWorkout("powerhouse gym", "def", false);
+                    } else if(ns.getPlayer().skills.dexterity < 85){
+                        ns.print(`[Iteration #${iteration}] -------------------- TRAINING DEXTERITY --------------------`);
+                        ns.singularity.gymWorkout("powerhouse gym", "dex", false);
                     } else {
-                        ns.singularity.gymWorkout("Sector-12", "agility");
+                        ns.print(`[Iteration #${iteration}] -------------------- TRAINING AGILITY --------------------`);
+                        ns.singularity.gymWorkout("powerhouse gym", "agi", false);
                     }
                 } else {
                     ns.print(`[Iteration #${iteration}] -------------------- CRIME: HOMICIDE --------------------`);
@@ -53,5 +60,6 @@ export async function main(ns) {
         }
 
         await ns.asleep(15_000);
+        iteration++;
     }
 }

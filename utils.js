@@ -3,14 +3,14 @@
  * @returns {Promise<string[]>} Array containg all servers that are hackable by player
  */
 export async function scanNetworkServersAsync(ns){
-    var servers = ns.scan()
+    var servers = ns.scan().filter(x => x !== "home" && !x.startsWith("hacknet"));
     var index = 0
     do {
         var currentServer = servers[index]
         index++
 
         ns.scan(currentServer).forEach(scannedServer => {
-            if(servers.indexOf(scannedServer) >= 0 || scannedServer == "home"){
+            if(servers.indexOf(scannedServer) >= 0 || scannedServer === "home" || scannedServer.startsWith("hacknet")){
                 return;
             }
             servers.push(scannedServer)

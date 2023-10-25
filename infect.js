@@ -29,12 +29,14 @@ export async function main(ns) {
       }
 
       ns.scp("./hack.js", server, "home");
-      let targetIndex = 0;
-      while((ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) >= ns.getScriptRam("./hack.js")){
-        ns.exec("./hack.js", server, 1, targets[targetIndex]);
-        await ns.asleep(50);
-
-        targetIndex = (targetIndex + 1) % (targets.length);
+      var ramPerTarget = (ns.getServerMaxRam(server) - ns.getServerUsedRam(server)) / targets.length;
+      for(var i = 0; i < targets.length; i++){
+        let totalThreads = Math.ceil(ramPerTarget / ns.getScriptRam("./hack.js"));
+        while(totalThreads > 0 && totalThreads * ns.getScriptRam("./hack.js") > (ns.getServerMaxRam(server) - ns.getServerUsedRam(server))){
+          totalThreads--;
+        }
+        if(totalThreads <= 0) continue;
+        ns.exec("./hack.js", server, totalThreads, targets[i]);
       }
     });
     await ns.asleep(30_000);

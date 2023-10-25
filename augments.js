@@ -1,7 +1,7 @@
 /** @param {import(".").NS} ns */
 export async function main(ns) {
     const ownedAugmentations = ns.singularity.getOwnedAugmentations(false);
-    const moneyThreshold = 100_000_000 + Math.pow(ownedAugmentations.length, 3) * 5_000_000;
+    const moneyThreshold = 100_000_000 + Math.pow(ownedAugmentations.length, 3) * 2_500_000;
     if(ns.getServerMoneyAvailable("home") < moneyThreshold){
         ns.exit();
     }
